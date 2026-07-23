@@ -53,7 +53,13 @@ public class AiProxyServiceImpl implements AiProxyService {
     @Transactional
     public CropRecommendationResponse recommendCrop(UUID userId, CropRecommendationRequest request) {
         Farmer farmer = resolveFarmer(userId);
-        CropRecommendationResponse response = localAiService.recommendCrop(request);
+        CropRecommendationResponse response;
+        try {
+            response = localAiService.recommendCrop(request);
+        } catch (Exception ex) {
+            log.warn("Ollama crop recommendation unavailable, falling back to heuristic ai-service: {}", ex.getMessage());
+            response = aiServiceClient.recommendCrop(request);
+        }
         double avgConfidence = response.recommendedCrops().stream()
                 .mapToDouble(CropRecommendationResponse.CropSuggestion::suitabilityScore)
                 .average().orElse(0);
@@ -74,7 +80,13 @@ public class AiProxyServiceImpl implements AiProxyService {
     @Transactional
     public DiseaseDetectionResponse detectDisease(UUID userId, MultipartFile image) {
         Farmer farmer = resolveFarmer(userId);
-        DiseaseDetectionResponse response = localAiService.detectDisease(image);
+        DiseaseDetectionResponse response;
+        try {
+            response = localAiService.detectDisease(image);
+        } catch (Exception ex) {
+            log.warn("Ollama disease detection unavailable, falling back to heuristic ai-service: {}", ex.getMessage());
+            response = aiServiceClient.detectDisease(image);
+        }
         persist(PredictionType.DISEASE, farmer,
                 Map.of("fileName", image.getOriginalFilename() == null ? "unknown" : image.getOriginalFilename(),
                         "sizeBytes", image.getSize()),
