@@ -6,7 +6,7 @@ spring:
     name: farmconnect-backend
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:farmconnect}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:farmconnect}?sslmode=${DB_SSLMODE:disable}
     username: ${DB_USERNAME:farmconnect}
     password: ${DB_PASSWORD:1234}
     driver-class-name: org.postgresql.Driver
