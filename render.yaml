@@ -1,0 +1,84 @@
+databases:
+  - name: farmconnect-db
+    plan: free
+    databaseName: farmconnect
+    user: farmconnect
+
+services:
+  - type: web
+    name: farmconnect-ai-service
+    runtime: docker
+    dockerfilePath: ./ai-service/Dockerfile
+    dockerContext: ./ai-service
+    plan: free
+    envVars:
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: WEATHER_API_KEY
+        sync: false
+
+  - type: web
+    name: farmconnect-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: farmconnect-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: farmconnect-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: farmconnect-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: farmconnect-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: farmconnect-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION_MS
+        value: "86400000"
+      - key: JWT_ONBOARDING_EXPIRATION_MS
+        value: "900000"
+      - key: OLLAMA_PULL_STRATEGY
+        value: never
+      - key: FRONTEND_BASE_URL
+        sync: false
+      - key: AI_SERVICE_BASE_URL
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: MAIL_HOST
+        sync: false
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_FROM
+        sync: false
