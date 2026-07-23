@@ -6,7 +6,6 @@
 
 ## Backend (Maven / Java)
 backend/target/
-backend/.mvn/
 backend/*.iml
 backend/.idea/
 backend/HELP.md
