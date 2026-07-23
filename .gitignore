@@ -1,0 +1,35 @@
+## Root
+.env
+.env.local
+*.log
+.DS_Store
+
+## Backend (Maven / Java)
+backend/target/
+backend/.mvn/
+backend/*.iml
+backend/.idea/
+backend/HELP.md
+backend/uploads/
+
+## Frontend (Node / Vite)
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/*.local
+frontend/*.tsbuildinfo
+
+## AI service (Python)
+ai-service/venv/
+ai-service/.venv/
+ai-service/__pycache__/
+ai-service/**/__pycache__/
+ai-service/*.pyc
+
+## IDE
+.vscode/
+.idea/
+*.swp
+
+## OS
+Thumbs.db

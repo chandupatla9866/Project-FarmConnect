@@ -1,0 +1,98 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: farmconnect-backend
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:farmconnect}
+    username: ${DB_USERNAME:farmconnect}
+    password: ${DB_PASSWORD:1234}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc.time_zone: UTC
+    show-sql: false
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 12MB
+
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      chat:
+        model: ${OLLAMA_MODEL:llava:7b}
+        options:
+          temperature: 0.3
+          # llava truncates JSON mid-object at the default prediction cap
+          num-predict: 1024
+      init:
+        # Auto-pulls the model on first startup if it's not already present locally,
+        # so a fresh `ollama` install doesn't need a manual `ollama pull` step first.
+        pull-model-strategy: when_missing
+        timeout: 10m
+
+app:
+  frontend-base-url: ${FRONTEND_BASE_URL:http://localhost:5173}
+  jwt:
+    secret: ${JWT_SECRET:dev-only-insecure-secret-change-me-farmconnect-ai-please-replace-in-prod-32bytes}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+    onboarding-expiration-ms: ${JWT_ONBOARDING_EXPIRATION_MS:900000}
+  oauth2:
+    google:
+      # Intentionally NOT under spring.security.oauth2.client.* - Spring Boot's
+      # OAuth2ClientAutoConfiguration eagerly validates that path and refuses to
+      # start if a registration is present with a blank client-id/secret. Reading
+      # these as plain custom properties lets SecurityConfig build the Google
+      # ClientRegistration itself, and skip oauth2Login() wiring entirely when
+      # they're blank, so the app still boots cleanly before credentials exist.
+      client-id: ${GOOGLE_CLIENT_ID:}
+      client-secret: ${GOOGLE_CLIENT_SECRET:}
+  cloudinary:
+    cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+    api-key: ${CLOUDINARY_API_KEY:}
+    api-secret: ${CLOUDINARY_API_SECRET:}
+  mail:
+    # Not under spring.mail.* - built manually in MailConfig so the app boots
+    # cleanly with a blank host, same reasoning as app.oauth2.google.* above.
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    from: ${MAIL_FROM:FarmConnect AI <no-reply@farmconnect.ai>}
+  ai-service:
+    base-url: ${AI_SERVICE_BASE_URL:http://localhost:8000}
+  geocoding:
+    api-key: ${GOOGLE_MAPS_API_KEY:}
+    base-url: https://maps.googleapis.com/maps/api/geocode
+  razorpay:
+    key-id: ${RAZORPAY_KEY_ID:}
+    key-secret: ${RAZORPAY_KEY_SECRET:}
+  local-storage:
+    upload-dir: ${LOCAL_UPLOAD_DIR:./uploads}
+    public-base-url: ${LOCAL_UPLOAD_PUBLIC_URL:http://localhost:8080/uploads}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+logging:
+  level:
+    com.farmconnect: INFO
+    org.hibernate.SQL: WARN

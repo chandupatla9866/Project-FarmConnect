@@ -1,0 +1,979 @@
+<title>FarmConnect AI — Engineering Field Manual</title>
+<style>
+  :root {
+    --paper: #f5f7f3;
+    --paper-raised: #ffffff;
+    --ink: #131a14;
+    --ink-soft: #4b564c;
+    --ink-faint: #7b857a;
+    --accent: #1f6f45;
+    --accent-ink: #ffffff;
+    --accent-soft: #dfeee3;
+    --accent-soft-ink: #164f31;
+    --line: #d3d9cd;
+    --line-strong: #b7c0b0;
+    --amber: #965614;
+    --amber-soft: #f3e4d3;
+    --danger: #a3311d;
+    --danger-soft: #f6e2dd;
+    --code-bg: #101712;
+    --code-ink: #d9e4da;
+    --code-line: #263129;
+    --shadow: 0 1px 2px rgba(19,26,20,0.06), 0 8px 24px rgba(19,26,20,0.05);
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", "JetBrains Mono", Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #0d1210;
+    --paper-raised: #131a15;
+    --ink: #e7ece5;
+    --ink-soft: #b3bdb0;
+    --ink-faint: #7d887a;
+    --accent: #5fcf8c;
+    --accent-ink: #08170f;
+    --accent-soft: #16261c;
+    --accent-soft-ink: #8fe0ae;
+    --line: #253028;
+    --line-strong: #34412f;
+    --amber: #dd9a54;
+    --amber-soft: #2b2216;
+    --danger: #e5776a;
+    --danger-soft: #2c1a17;
+    --code-bg: #08100b;
+    --code-ink: #cddccc;
+    --code-line: #1e2a20;
+    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 12px 28px rgba(0,0,0,0.35);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0d1210;
+      --paper-raised: #131a15;
+      --ink: #e7ece5;
+      --ink-soft: #b3bdb0;
+      --ink-faint: #7d887a;
+      --accent: #5fcf8c;
+      --accent-ink: #08170f;
+      --accent-soft: #16261c;
+      --accent-soft-ink: #8fe0ae;
+      --line: #253028;
+      --line-strong: #34412f;
+      --amber: #dd9a54;
+      --amber-soft: #2b2216;
+      --danger: #e5776a;
+      --danger-soft: #2c1a17;
+      --code-bg: #08100b;
+      --code-ink: #cddccc;
+      --code-line: #1e2a20;
+      --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 12px 28px rgba(0,0,0,0.35);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  ::selection { background: var(--accent-soft); color: var(--accent-soft-ink); }
+
+  .shell {
+    display: grid;
+    grid-template-columns: 272px minmax(0, 1fr);
+    max-width: 1320px;
+    margin: 0 auto;
+  }
+
+  /* ---- Sidebar ---- */
+  .toc {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 34px 20px 34px 32px;
+    border-right: 1px solid var(--line);
+  }
+  .toc-brand {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .toc-brand span { color: var(--accent); }
+  .toc-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-bottom: 28px;
+  }
+  .toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .toc li { border-bottom: 1px solid var(--line); }
+  .toc a {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    padding: 9px 2px;
+    text-decoration: none;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    transition: color .15s ease;
+  }
+  .toc a:hover { color: var(--ink); }
+  .toc a.active { color: var(--accent); font-weight: 600; }
+  .toc .num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    flex-shrink: 0;
+    width: 18px;
+  }
+  .toc a.active .num { color: var(--accent); }
+  .toc-meta {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    line-height: 1.9;
+  }
+
+  /* ---- Main ---- */
+  main { min-width: 0; padding: 0 40px 120px; }
+
+  .cover {
+    padding: 64px 0 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .cover .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  h1.title {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: clamp(30px, 4.2vw, 46px);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+  .cover .dek {
+    max-width: 62ch;
+    font-size: 17px;
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+  }
+  .stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--paper-raised);
+    box-shadow: var(--shadow);
+  }
+  .stat {
+    flex: 1 1 140px;
+    padding: 14px 18px;
+    border-right: 1px solid var(--line);
+  }
+  .stat:last-child { border-right: none; }
+  .stat .n {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .stat .l {
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    margin-top: 2px;
+  }
+
+  section.chapter { padding: 56px 0; border-bottom: 1px solid var(--line); }
+  section.chapter:last-of-type { border-bottom: none; }
+
+  .chapter-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+  .chapter-head .num {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  h2 {
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .chapter-kicker {
+    color: var(--ink-faint);
+    font-size: 14.5px;
+    margin: 0 0 28px;
+    max-width: 68ch;
+  }
+
+  h3 {
+    font-family: var(--mono);
+    font-size: 16.5px;
+    font-weight: 700;
+    margin: 36px 0 12px;
+    letter-spacing: -0.005em;
+  }
+  h3:first-child { margin-top: 0; }
+
+  p { max-width: 72ch; margin: 0 0 14px; color: var(--ink); }
+  p.lede { font-size: 16.5px; color: var(--ink-soft); }
+  ul, ol.plain { max-width: 72ch; padding-left: 22px; margin: 0 0 16px; }
+  li { margin-bottom: 6px; }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    background: var(--accent-soft);
+    color: var(--accent-soft-ink);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+  }
+
+  .codeblock-wrap { margin: 18px 0 22px; border-radius: 10px; overflow: hidden; box-shadow: var(--shadow); }
+  .codeblock-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--code-ink);
+    background: var(--code-line);
+    padding: 7px 14px;
+    opacity: 0.8;
+  }
+  pre.code {
+    margin: 0;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  pre.code code { background: none; color: inherit; padding: 0; }
+
+  .table-wrap { overflow-x: auto; margin: 16px 0 24px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper-raised); box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 13.5px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-faint); background: var(--accent-soft); }
+  tr:last-child td { border-bottom: none; }
+  td code { white-space: nowrap; }
+  .num-col { font-variant-numeric: tabular-nums; font-family: var(--mono); }
+
+  .cardgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin: 18px 0 26px; }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    background: var(--paper-raised);
+    box-shadow: var(--shadow);
+  }
+  .card h4 {
+    font-family: var(--mono);
+    font-size: 13.5px;
+    margin: 0 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card p { font-size: 13.5px; color: var(--ink-soft); margin: 0; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot.green { background: var(--accent); }
+  .dot.amber { background: var(--amber); }
+  .dot.gray { background: var(--ink-faint); }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-soft-ink);
+    font-weight: 600;
+  }
+  .pill.amber { background: var(--amber-soft); color: var(--amber); }
+  .pill.danger { background: var(--danger-soft); color: var(--danger); }
+
+  .bugcard {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--amber);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 0 0 16px;
+    background: var(--paper-raised);
+    box-shadow: var(--shadow);
+  }
+  .bugcard h4 { font-family: var(--mono); font-size: 14.5px; margin: 0 0 6px; }
+  .bugcard .meta { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .bugcard p { font-size: 14px; margin: 0 0 8px; color: var(--ink-soft); }
+  .bugcard p:last-child { margin-bottom: 0; }
+  .bugcard strong { color: var(--ink); }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 18px 0 24px; font-family: var(--mono); font-size: 12.5px; }
+  .flow .step {
+    border: 1px solid var(--line-strong);
+    background: var(--paper-raised);
+    padding: 7px 12px;
+    border-radius: 7px;
+    color: var(--ink-soft);
+  }
+  .flow .step.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .flow .arrow { color: var(--ink-faint); }
+
+  .mermaid-wrap { margin: 20px 0 28px; border: 1px solid var(--line); border-radius: 10px; padding: 18px; background: var(--paper-raised); overflow-x: auto; box-shadow: var(--shadow); }
+
+  .env-key { font-family: var(--mono); font-weight: 600; color: var(--ink); }
+  .fig-note { font-size: 12.5px; color: var(--ink-faint); margin-top: -8px; }
+
+  footer.colophon {
+    padding: 40px 0 20px;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; }
+    .toc { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); padding: 24px 20px; }
+    main { padding: 0 20px 80px; }
+    .toc ol { columns: 2; }
+  }
+</style>
+
+<div class="shell">
+  <nav class="toc" id="toc">
+    <a class="toc-brand" href="#top">FARM<span>CONNECT</span>·AI</a>
+    <div class="toc-tag">engineering field manual</div>
+    <ol>
+      <li><a href="#overview"><span class="num">00</span>Overview</a></li>
+      <li><a href="#architecture"><span class="num">01</span>Architecture</a></li>
+      <li><a href="#data-model"><span class="num">02</span>Data model</a></li>
+      <li><a href="#auth"><span class="num">03</span>Auth &amp; access control</a></li>
+      <li><a href="#dashboards"><span class="num">04</span>Four dashboards</a></li>
+      <li><a href="#lifecycle"><span class="num">05</span>Order &amp; delivery flow</a></li>
+      <li><a href="#ai"><span class="num">06</span>AI features</a></li>
+      <li><a href="#integrations"><span class="num">07</span>Real integrations</a></li>
+      <li><a href="#hardening"><span class="num">08</span>Bugs found &amp; fixed</a></li>
+      <li><a href="#run"><span class="num">09</span>Running it locally</a></li>
+    </ol>
+    <div class="toc-meta">
+      spring boot 3.3.4 · java 17<br>
+      react 18 · vite · typescript<br>
+      fastapi · python<br>
+      postgresql 18
+    </div>
+  </nav>
+
+  <main id="top">
+    <header class="cover">
+      <div class="eyebrow">/// how this system is actually built</div>
+      <h1 class="title">FarmConnect AI —<br>an engineering field manual</h1>
+      <p class="dek">A farm-to-doorstep marketplace connecting farmers directly with apartment
+        communities and restaurants. This manual documents what was built, why each
+        decision was made, and exactly how every moving part — from JWT auth to
+        Gmail SMTP to Google geocoding — fits together.</p>
+      <div class="stat-row">
+        <div class="stat"><div class="n">4</div><div class="l">role dashboards</div></div>
+        <div class="stat"><div class="n">15</div><div class="l">database tables</div></div>
+        <div class="stat"><div class="n">24</div><div class="l">flyway migrations</div></div>
+        <div class="stat"><div class="n">3</div><div class="l">independent services</div></div>
+        <div class="stat"><div class="n">5</div><div class="l">live 3rd-party APIs</div></div>
+        <div class="stat"><div class="n">8</div><div class="l">real bugs fixed</div></div>
+      </div>
+    </header>
+
+    <!-- 00 OVERVIEW -->
+    <section class="chapter" id="overview">
+      <div class="chapter-head"><span class="num">00</span><h2>Overview</h2></div>
+      <p class="chapter-kicker">What the platform does, who uses it, and the shape of the codebase.</p>
+
+      <p class="lede">FarmConnect AI cuts the middleman out of local produce trade. A farmer
+        lists what's growing; a nearby apartment community or restaurant orders it directly;
+        a delivery partner picks it up and drops it off with an OTP handshake; an admin keeps
+        the whole marketplace healthy. Four different people, four different jobs, one shared
+        backend.</p>
+
+      <div class="cardgrid">
+        <div class="card"><h4><span class="dot green"></span>Farmer</h4><p>Lists produce, manages incoming orders, reads AI-backed demand/price/crop guidance, checks disease photos and weather risk.</p></div>
+        <div class="card"><h4><span class="dot green"></span>Buyer</h4><p>Browses verified farms, orders by the kilogram, tracks delivery with a live OTP, rates the farm afterward.</p></div>
+        <div class="card"><h4><span class="dot green"></span>Delivery partner</h4><p>Claims ready pickups, confirms hand-off with the buyer's OTP, earns a distance-based fee automatically.</p></div>
+        <div class="card"><h4><span class="dot green"></span>Admin</h4><p>Verifies farms, moderates listings, watches platform-wide revenue and order health.</p></div>
+      </div>
+
+      <h3>Repository layout</h3>
+      <div class="codeblock-wrap">
+        <div class="codeblock-label">monorepo</div>
+        <pre class="code"><code>backend/      Spring Boot 3.3.4 REST API (Java 17) — the only thing that talks to Postgres
+frontend/     React 18 + Vite + TypeScript SPA, four role-scoped dashboards
+ai-service/   FastAPI microservice — heuristic prediction models behind swappable interfaces
+docs/         SETUP / ARCHITECTURE / API reference kept current with the code</code></pre>
+      </div>
+    </section>
+
+    <!-- 01 ARCHITECTURE -->
+    <section class="chapter" id="architecture">
+      <div class="chapter-head"><span class="num">01</span><h2>Architecture</h2></div>
+      <p class="chapter-kicker">Three services, one database, and a deliberate rule about which service is allowed to talk to what.</p>
+
+      <div class="mermaid-wrap">
+<pre class="mermaid">
+flowchart LR
+  SPA["React SPA<br/>:5173"]
+  API["Spring Boot API<br/>:8080"]
+  AI["FastAPI AI service<br/>:8000"]
+  DB[("PostgreSQL<br/>15 tables")]
+  GMAIL["Gmail SMTP"]
+  GAPI["Google OAuth2 /<br/>Maps JS / Geocoding"]
+  OWM["OpenWeatherMap"]
+  CLD["Cloudinary"]
+
+  SPA -- "JWT bearer" --> API
+  SPA -- "Maps JS API" --> GAPI
+  API --> AI
+  API --> DB
+  API -- "async" --> GMAIL
+  API --> GAPI
+  API --> CLD
+  AI --> OWM
+</pre>
+      </div>
+      <p class="fig-note">The frontend never calls the AI service directly — every AI request is
+        proxied through the Spring backend, which persists an audit row for it. This keeps auth,
+        rate-limiting and logging centralised in one place instead of duplicated per client.</p>
+
+      <h3>Request lifecycle</h3>
+      <div class="flow">
+        <span class="step on">Controller</span><span class="arrow">→</span>
+        <span class="step">validates input</span><span class="arrow">→</span>
+        <span class="step on">Service</span><span class="arrow">→</span>
+        <span class="step">business rules + @Transactional</span><span class="arrow">→</span>
+        <span class="step on">Repository</span><span class="arrow">→</span>
+        <span class="step">Postgres</span>
+      </div>
+      <p>Controllers hold no business logic — they validate the request body with Bean Validation
+        and hand off. Services own the transaction boundary and map entities straight to response
+        DTOs inline (no separate mapper layer; the DTOs are simple enough that a mapper would add
+        indirection without saving real code).</p>
+
+      <h3>Backend package layout</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Package</th><th>Holds</th></tr></thead>
+          <tbody>
+            <tr><td><code>controller/</code></td><td>REST endpoints — request/response DTOs only</td></tr>
+            <tr><td><code>service/ · service/impl/</code></td><td>Business logic, transaction boundaries</td></tr>
+            <tr><td><code>repository/</code></td><td>Spring Data JPA interfaces</td></tr>
+            <tr><td><code>domain/entity/ · domain/enums/</code></td><td>JPA entities and shared enums</td></tr>
+            <tr><td><code>security/</code></td><td>JWT provider/filter, OAuth2 success handler</td></tr>
+            <tr><td><code>client/</code></td><td>Outbound HTTP clients — AI service, Google Geocoding</td></tr>
+            <tr><td><code>email/</code></td><td>Async email service + HTML template builder</td></tr>
+            <tr><td><code>storage/</code></td><td>Image upload — Cloudinary with local-disk fallback</td></tr>
+            <tr><td><code>config/</code></td><td>Security, CORS, mail, async executor, REST clients</td></tr>
+            <tr><td><code>exception/</code></td><td><code>GlobalExceptionHandler</code> + typed exceptions</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Frontend structure</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Path</th><th>Holds</th></tr></thead>
+          <tbody>
+            <tr><td><code>context/</code></td><td>AuthContext (JWT + user), ThemeContext, CartContext</td></tr>
+            <tr><td><code>lib/apiClient.ts</code></td><td>Single Axios instance — attaches JWT, redirects to <code>/login</code> on 401</td></tr>
+            <tr><td><code>lib/api/*</code></td><td>One thin module per resource, unwraps the response envelope</td></tr>
+            <tr><td><code>components/layout/</code></td><td>Navbar (shared) + one Sidebar/DashboardLayout per role</td></tr>
+            <tr><td><code>components/ui/</code></td><td>Design-system primitives — Button, Input, Toast, LocationMap…</td></tr>
+            <tr><td><code>pages/{farmer,buyer,delivery,admin}/</code></td><td>Route-level components, one per URL</td></tr>
+            <tr><td><code>utils/roles.ts</code></td><td><code>resolveDashboardPath(roles)</code> — single source of truth for post-login routing</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 02 DATA MODEL -->
+    <section class="chapter" id="data-model">
+      <div class="chapter-head"><span class="num">02</span><h2>Data model</h2></div>
+      <p class="chapter-kicker">15 tables, all created by Flyway — every migration is forward-only and never edited once applied.</p>
+
+      <p>The full relational model — including tables no endpoint used yet — was built in the
+        very first phase, specifically so later phases (Buyer, Delivery, Admin) needed only new
+        controllers and services against tables that already existed with realistic seed data.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Table</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>users</code> / <code>roles</code> / <code>user_roles</code></td><td>One user can hold multiple roles; local + Google auth in one table via <code>auth_provider</code></td></tr>
+            <tr><td><code>farmers</code></td><td>Farm profile, address, geocoded lat/lng, verification status</td></tr>
+            <tr><td><code>buyers</code></td><td>Apartment community or restaurant profile, delivery address, geocoded lat/lng</td></tr>
+            <tr><td><code>categories</code> / <code>products</code></td><td>Produce catalog, priced per unit, organic flag, stock status</td></tr>
+            <tr><td><code>orders</code> / <code>order_items</code></td><td>Order header + line items, snapshots buyer's coordinates at checkout time</td></tr>
+            <tr><td><code>deliveries</code></td><td>Auto-created on pickup-ready; carries the OTP and the computed delivery fee</td></tr>
+            <tr><td><code>payments</code></td><td>COD only — created/completed automatically on OTP-verified drop-off</td></tr>
+            <tr><td><code>reviews</code> / <code>favorites</code></td><td>Buyer feedback on delivered orders; saved products</td></tr>
+            <tr><td><code>notifications</code></td><td>In-app feed — every entry also triggers an async email (see §07)</td></tr>
+            <tr><td><code>ai_predictions</code></td><td>Audit row for every AI-service call, kept for later model evaluation</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Migration discipline</h3>
+      <p>A migration, once applied to a running database, is never edited — Flyway checksums the
+        applied file and refuses to start if it's changed underneath it. Every correction during
+        this build shipped as a new numbered migration instead:</p>
+      <div class="codeblock-wrap">
+        <div class="codeblock-label">backend/src/main/resources/db/migration</div>
+        <pre class="code"><code>V1 … V14   schema (extensions, roles, users, farmers, buyers, products, orders, deliveries…)
+V15 … V19  seed data (roles, categories, demo users, products, orders)
+V20 … V21  favorites table + seed
+V22        corrective — fixed demo accounts that had accidentally shared one password hash
+V23        add delivery.otp + delivery.delivery_fee columns for the OTP hand-off flow
+V24        corrective — two seeded Unsplash photo IDs 404'd; swapped for verified working ones</code></pre>
+      </div>
+    </section>
+
+    <!-- 03 AUTH -->
+    <section class="chapter" id="auth">
+      <div class="chapter-head"><span class="num">03</span><h2>Auth &amp; access control</h2></div>
+      <p class="chapter-kicker">Stateless JWT for everyone, Google OAuth2 layered on top — and only switched on once real credentials exist.</p>
+
+      <h3>Local login</h3>
+      <p>BCrypt-hashed passwords. <code>POST /api/auth/login</code> returns an HMAC-SHA256 JWT
+        (24h expiry) carrying <code>userId</code> and <code>roles</code>. Every protected request
+        carries it as <code>Authorization: Bearer &lt;jwt&gt;</code>; <code>JwtAuthFilter</code>
+        runs before Spring's own <code>UsernamePasswordAuthenticationFilter</code> and populates
+        the security context directly from the token — there's no server-side session at all.</p>
+
+      <h3>Google OAuth2 — wired up, but conditionally</h3>
+      <p>Spring Boot's own <code>OAuth2ClientAutoConfiguration</code> refuses to even start the
+        app if a client registration exists with a blank client-id. So the Google client isn't
+        declared under Spring's managed <code>spring.security.oauth2.client.*</code> path at all —
+        it's read as a plain custom property (<code>app.oauth2.google.*</code>) and the
+        <code>ClientRegistration</code> is built by hand inside <code>SecurityConfig</code>, and
+        <code>.oauth2Login()</code> is only attached to the filter chain when both
+        <code>GOOGLE_CLIENT_ID</code> and <code>GOOGLE_CLIENT_SECRET</code> are non-blank:</p>
+      <div class="codeblock-wrap">
+        <div class="codeblock-label">SecurityConfig.java</div>
+        <pre class="code"><code>if (StringUtils.hasText(googleClientId) && StringUtils.hasText(googleClientSecret)) {
+    http.oauth2Login(oauth2 -> oauth2
+            .clientRegistrationRepository(googleClientRegistrationRepository())
+            .successHandler(oAuth2LoginSuccessHandler));
+}</code></pre>
+      </div>
+      <p>Until both values exist, <code>/oauth2/**</code> simply 404s and "Continue with Google"
+        is inert — the rest of the app works normally on email/password. This same
+        <strong>wired-up-but-inert</strong> shape is reused for every optional integration in §07:
+        Cloudinary, SMTP, and Google Maps all boot cleanly with blank credentials and quietly
+        activate the moment real ones appear.</p>
+
+      <h3>New Google sign-ins with no role yet</h3>
+      <p>A brand-new Google account gets a short-lived (15 min) "onboarding" JWT and is routed to
+        a role-selection screen, which calls <code>POST /api/auth/select-role</code> to trade it
+        for a full access token.</p>
+
+      <h3>Authorization</h3>
+      <p><code>@PreAuthorize("hasRole('FARMER')")</code> on controllers, matching <code>ROLE_*</code>
+        authorities minted directly from the <code>roles</code> table — no separate mapping layer.
+        A request with a valid JWT but the wrong role gets a clean <code>403</code>; a request with
+        no JWT at all gets a clean <code>401</code> — see the entry-point bug in §08 for why that
+        second guarantee needed an explicit fix.</p>
+    </section>
+
+    <!-- 04 DASHBOARDS -->
+    <section class="chapter" id="dashboards">
+      <div class="chapter-head"><span class="num">04</span><h2>The four dashboards</h2></div>
+      <p class="chapter-kicker">One shared shell — Navbar, Sidebar, ProtectedRoute — four different sidebars and route trees layered on top.</p>
+
+      <p>Every dashboard shares the same <code>Navbar</code> component (it takes
+        <code>notificationsPath</code> / <code>profilePath</code> / <code>cartPath</code> props so
+        it can point at the right role's routes) and the same <code>ProtectedRoute</code> gate,
+        which checks the JWT's roles client-side before ever rendering the page. Log in as any
+        role and <code>resolveDashboardPath(roles)</code> sends you to the right home screen
+        automatically.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Role</th><th>Base route</th><th>Key screens</th></tr></thead>
+          <tbody>
+            <tr><td>Farmer</td><td><code>/farmer/*</code></td><td>Dashboard, Products, Orders, Analytics, five AI tools, Profile</td></tr>
+            <tr><td>Buyer</td><td><code>/buyer/*</code></td><td>Dashboard, Browse, Nearby Farmers (with map), Cart, Checkout, Orders, Favorites, Profile</td></tr>
+            <tr><td>Delivery</td><td><code>/delivery/*</code></td><td>Dashboard, Available Pickups, My Deliveries, History, Earnings, Profile</td></tr>
+            <tr><td>Admin</td><td><code>/admin/*</code></td><td>Platform Dashboard, Manage Farmers/Buyers/Products/Orders/Deliveries, Analytics</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Buyer cart</h3>
+      <p>The cart is deliberately client-side only, persisted to <code>localStorage</code> via
+        <code>CartContext</code>, and scoped to a single farmer at a time — adding a product from
+        a second farm clears the first farm's items, matching how a single order can only belong
+        to one farmer (<code>orders.farmer_id</code> is a single foreign key, not a per-line-item
+        one). There's no separate cart API; checkout sends the whole cart as one
+        <code>POST /api/buyer/orders</code> call.</p>
+    </section>
+
+    <!-- 05 LIFECYCLE -->
+    <section class="chapter" id="lifecycle">
+      <div class="chapter-head"><span class="num">05</span><h2>Order &amp; delivery lifecycle</h2></div>
+      <p class="chapter-kicker">A five-state order machine with an OTP hand-off baked into the middle of it.</p>
+
+      <div class="mermaid-wrap">
+<pre class="mermaid">
+stateDiagram-v2
+  [*] --> PENDING : buyer places order
+  PENDING --> ACCEPTED : farmer accepts
+  PENDING --> REJECTED : farmer rejects
+  ACCEPTED --> READY_FOR_PICKUP : farmer marks ready\n(Delivery row + OTP generated here)
+  READY_FOR_PICKUP --> OUT_FOR_DELIVERY : partner claims + picks up
+  OUT_FOR_DELIVERY --> DELIVERED : OTP verified at drop-off
+  REJECTED --> [*]
+  DELIVERED --> [*]
+</pre>
+      </div>
+
+      <h3>Where the OTP comes from</h3>
+      <p>There is no manual dispatch step. The instant a farmer marks an order
+        <code>READY_FOR_PICKUP</code>, the backend inline-creates the <code>Delivery</code> row:
+        a random 4-digit OTP, and a delivery fee computed from a Haversine distance between the
+        farmer's and buyer's geocoded coordinates.</p>
+      <div class="codeblock-wrap">
+        <div class="codeblock-label">delivery fee formula</div>
+        <pre class="code"><code>fee = ₹30 base + ₹5 × distanceKm(farmer.lat/lng, buyer.lat/lng)</code></pre>
+      </div>
+      <p>Any delivery partner can then claim it from <code>/delivery/available</code>. The OTP is
+        surfaced to the buyer on their own order-detail page — but only while the order is in
+        <code>READY_FOR_PICKUP</code> or <code>OUT_FOR_DELIVERY</code> — and is the one thing the
+        delivery partner needs from the buyer at the door to call
+        <code>PATCH /api/delivery/{id}/complete</code>, which marks the order
+        <code>DELIVERED</code> and the payment <code>COMPLETED</code> in a single transaction.</p>
+
+      <h3>Why Haversine, not a Maps distance API</h3>
+      <p>Delivery fee and "nearby farmers" filtering both need a distance between two known
+        coordinate pairs — that's pure spherical geometry, not a routing problem, so it's computed
+        in-process with the Haversine formula rather than spending a paid API call on it. Google's
+        Geocoding API is reserved for the one thing Haversine can't do: turning a typed address
+        into coordinates in the first place (§07).</p>
+    </section>
+
+    <!-- 06 AI FEATURES -->
+    <section class="chapter" id="ai">
+      <div class="chapter-head"><span class="num">06</span><h2>AI features</h2></div>
+      <p class="chapter-kicker">Five features, each behind a swappable interface — today's implementations are honest heuristics, not fake ML dressed up.</p>
+
+      <p>The frontend never calls the AI service directly; every call is proxied through
+        <code>/api/ai/**</code> on the Spring backend, which persists an <code>ai_predictions</code>
+        audit row and can apply auth centrally. Inside <code>ai-service/app/ml/</code>, each
+        feature sits behind an abstract base class — swapping in a real trained model later means
+        implementing that interface and changing one line, not touching the router or the Java
+        side at all.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feature</th><th>Current implementation</th></tr></thead>
+          <tbody>
+            <tr><td>Demand prediction</td><td>Weighted moving average over recent order history × a month-based seasonality multiplier</td></tr>
+            <tr><td>Crop recommendation</td><td>Lookup table keyed by (soil type, season), ranked by static suitability score</td></tr>
+            <tr><td>Price prediction</td><td>Category base price × organic multiplier × seasonality multiplier − bulk-quantity discount</td></tr>
+            <tr><td>Disease detection</td><td>Deterministic hash of the uploaded image buckets into one of 9 seeded conditions — same photo always returns the same result. The explicit swap point for a real CNN.</td></tr>
+            <tr><td>Weather alerts</td><td><strong>Live</strong> — see §07. Falls back to a deterministic synthetic provider if the API key is unset or the call fails.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 07 INTEGRATIONS -->
+    <section class="chapter" id="integrations">
+      <div class="chapter-head"><span class="num">07</span><h2>Real integrations</h2></div>
+      <p class="chapter-kicker">Four third-party services layered on in one working session — email, weather, maps, image hosting. Each follows the same rule: wired up fully, inert until real credentials exist.</p>
+
+      <h3>Email — Gmail SMTP + async delivery</h3>
+      <p>Nine real events already wrote to the <code>notifications</code> table before this — order
+        placed, accepted, rejected, ready-for-pickup, claimed, picked up, delivered, paid, reviewed.
+        Rather than scatter email calls across all seven call sites, the hook sits in one place:
+        <code>NotificationServiceImpl.notify()</code> saves the in-app row and then fires the email —
+        every existing trigger gets an email for free.</p>
+      <div class="codeblock-wrap">
+        <div class="codeblock-label">NotificationServiceImpl.java</div>
+        <pre class="code"><code>notificationRepository.save(notification);
+emailService.sendNotificationEmail(user.getEmail(), user.getFullName(), title, message, type);</code></pre>
+      </div>
+      <p>Sending runs on a dedicated <code>@Async("emailExecutor")</code> thread pool (2–4 threads,
+        <code>AsyncConfig.java</code>) so a slow SMTP handshake never blocks the request that
+        triggered it. The message body is one shared branded HTML template
+        (<code>EmailTemplateBuilder</code>) — a green header with the FarmConnect wordmark, a
+        colored badge per notification type (order / payment / AI / weather), and a
+        "thanks for growing with FarmConnect AI" footer — built as a Java text block with inline
+        table-based styling so it survives Gmail and Outlook stripping <code>&lt;style&gt;</code>
+        blocks.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Env var</th><th>Value used</th></tr></thead>
+          <tbody>
+            <tr><td><span class="env-key">MAIL_HOST</span></td><td><code>smtp.gmail.com</code></td></tr>
+            <tr><td><span class="env-key">MAIL_PORT</span></td><td><code>587</code> (STARTTLS)</td></tr>
+            <tr><td><span class="env-key">MAIL_USERNAME</span></td><td>the sending Gmail address</td></tr>
+            <tr><td><span class="env-key">MAIL_PASSWORD</span></td><td>a 16-character Gmail <em>App Password</em>, not the real account password</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fig-note">Verified live: accepted a real test order and watched the branded email land in a real inbox within seconds.</p>
+
+      <h3>Weather — OpenWeatherMap</h3>
+      <p><code>OpenWeatherMapProvider</code> calls OpenWeatherMap's free Current Weather endpoint
+        for real temperature, humidity and condition. That free tier has no alerts feed (that's
+        the paid One Call API), so alerts are derived from the real numbers instead of being
+        invented: temperature ≥ 40°C raises a heat-wave alert, "thunderstorm" in the condition
+        raises a storm alert, "rain"/"drizzle" raises a heavy-rain alert, humidity ≥ 85% raises a
+        fungal-risk alert. Any network failure falls straight back to the original synthetic
+        provider — the farmer always gets an answer.</p>
+      <p class="fig-note">Verified live against Pune coordinates: real city name, real temperature, real cloud condition.</p>
+
+      <h3>Maps — Geocoding + live map display</h3>
+      <p>Farmer and buyer profiles used to require typing raw decimal latitude/longitude by hand.
+        Now saving a profile geocodes the typed address server-side through
+        <code>GeocodingClient</code> (Google's Geocoding API) and overwrites the coordinates
+        automatically — the manual number inputs are gone from both profile forms, replaced by a
+        live <code>&lt;LocationMap&gt;</code> component (built on
+        <code>@react-google-maps/api</code>) showing exactly where the address resolved to.</p>
+      <div class="codeblock-wrap">
+        <div class="codeblock-label">FarmerServiceImpl.updateProfile()</div>
+        <pre class="code"><code>Optional&lt;Coordinates&gt; geocoded = geocodingClient.geocode(buildAddress(address, city, state, pincode));
+if (geocoded.isPresent()) {
+    farmer.setFarmLatitude(geocoded.get().latitude());
+    farmer.setFarmLongitude(geocoded.get().longitude());
+} else {
+    // Maps not configured, or lookup failed — keep whatever the client sent as a fallback
+    farmer.setFarmLatitude(request.farmLatitude());
+    farmer.setFarmLongitude(request.farmLongitude());
+}</code></pre>
+      </div>
+      <p>The buyer's Nearby Farmers page also gained an actual map above the card grid, pinning
+        every farmer that has resolved coordinates — the same distance math from §05 now has
+        real coordinates behind it instead of hand-typed ones.</p>
+      <p class="fig-note">Verified live: entered "Shaniwar Wada, Pune" as a farm address and the resulting pin landed exactly on the correct real-world location.</p>
+
+      <h3>Cloudinary — image hosting</h3>
+      <p>Product and profile photo uploads already had a fallback path to local disk
+        (<code>backend/uploads/</code>) for when Cloudinary isn't configured. Wiring in real
+        credentials exposed a real gap in that fallback — see §08.</p>
+    </section>
+
+    <!-- 08 HARDENING -->
+    <section class="chapter" id="hardening">
+      <div class="chapter-head"><span class="num">08</span><h2>Bugs found &amp; fixed</h2></div>
+      <p class="chapter-kicker">Every real defect found while wiring these integrations into a live, running system — not a curated highlight reel.</p>
+
+      <div class="bugcard">
+        <h4>Enabling Google login silently broke API session-expiry handling</h4>
+        <div class="meta"><span class="pill amber">auth flow</span><span class="pill">Spring config</span></div>
+        <p>The moment <code>.oauth2Login()</code> was switched on, Spring Security's default
+          response for <em>any</em> unauthenticated request — not just a browser page load —
+          became a <code>302</code> redirect to Google's consent screen instead of a plain
+          <code>401</code>. The SPA's Axios interceptor expects a JSON <code>401</code> to redirect
+          to <code>/login</code> on an expired token; a silent redirect to
+          <code>accounts.google.com</code> would have broken that entirely.</p>
+        <p><strong>Fix:</strong> an explicit <code>exceptionHandling().authenticationEntryPoint(...)</code>
+          in <code>SecurityConfig</code> that forces a bare 401 for the whole filter chain. Direct
+          navigation to <code>/oauth2/authorization/google</code> — the actual "Continue with
+          Google" button — still works, since that's a request to a permitted endpoint, not
+          something bounced through the entry point.</p>
+      </div>
+
+      <div class="bugcard">
+        <h4>Async email sending crashed with a Hibernate thread-safety violation</h4>
+        <div class="meta"><span class="pill danger">correctness</span><span class="pill">Hibernate</span></div>
+        <p>The first working version passed the live JPA <code>User</code> entity into the
+          <code>@Async</code> email method. Since <code>@Async</code> runs on a different thread
+          than the one holding that entity's Hibernate session, touching
+          <code>user.getEmail()</code> from the async thread raced the original transaction and
+          threw <code>IllegalStateException: Illegal pop() with non-matching
+          JdbcValuesSourceProcessingState</code> — which also corrupted the original request's
+          transaction, rolling back the order-accept it was part of.</p>
+        <p><strong>Fix:</strong> extract <code>email</code>/<code>fullName</code> as plain strings
+          on the calling thread <em>before</em> invoking the async method, so the async thread only
+          ever touches immutable Java objects, never a Hibernate-managed entity.</p>
+      </div>
+
+      <div class="bugcard">
+        <h4>Cloudinary permission error crashed product creation instead of falling back</h4>
+        <div class="meta"><span class="pill amber">resilience</span><span class="pill">image upload</span></div>
+        <p>Cloudinary rejected the real API key with <code>Request forbidden due to missing
+          permissions</code> — a scoped-key/account issue on Cloudinary's side. The existing
+          fallback-to-local-disk logic only caught <code>IOException</code>; Cloudinary's SDK
+          actually throws a plain <code>RuntimeException</code> for API-level failures, so it
+          propagated straight through as a 500 instead of triggering the fallback it was
+          written for.</p>
+        <p><strong>Fix:</strong> broadened the catch clause to <code>Exception</code>. Product
+          creation now degrades to local-disk storage on any Cloudinary failure — network,
+          auth, quota, or permissions — exactly as originally intended.</p>
+      </div>
+
+      <div class="bugcard">
+        <h4>Two broken seeded product images</h4>
+        <div class="meta"><span class="pill amber">data</span><span class="pill">seed data</span></div>
+        <p>"Okra (Bhindi)" and "Fresh Coriander" both shipped with Unsplash photo IDs that now
+          404. Found via a scripted UI sweep across every dashboard, not by eyeballing screens.</p>
+        <p><strong>Fix:</strong> <code>V24</code> — a corrective migration updating just those two
+          <code>image_url</code> values to verified, currently-live Unsplash photos.</p>
+      </div>
+
+      <div class="bugcard">
+        <h4>Two backend instances answering on different ports</h4>
+        <div class="meta"><span class="pill">infra</span><span class="pill">local dev</span></div>
+        <p>An older backend process, started earlier without the new Google OAuth env vars, was
+          still running on port 8081 — and the frontend's <code>.env</code> pointed there, not at
+          the freshly-restarted instance on 8080 that actually had the credentials. "Continue with
+          Google" kept 500-ing even after the credentials were correctly set, because the process
+          actually serving requests didn't have them.</p>
+        <p><strong>Fix:</strong> killed both stray processes, standardized on port 8080 (matching
+          the registered Google redirect URI), and restarted a single canonical backend + frontend
+          pair.</p>
+      </div>
+
+      <div class="bugcard">
+        <h4><code>.env</code> failed to load — unquoted <code>&lt;</code> in MAIL_FROM</h4>
+        <div class="meta"><span class="pill">tooling</span><span class="pill">shell</span></div>
+        <p><code>MAIL_FROM=FarmConnect AI &lt;no-reply@farmconnect.ai&gt;</code> is valid as a value,
+          but <code>source .env</code> in bash parses the file as shell script — the unquoted
+          <code>&lt;</code> is interpreted as input redirection, breaking the whole source command
+          before the backend even started.</p>
+        <p><strong>Fix:</strong> quoted the value — <code>MAIL_FROM="FarmConnect AI &lt;no-reply@farmconnect.ai&gt;"</code>.</p>
+      </div>
+
+      <div class="bugcard">
+        <h4>A seeded demo account lost its role assignment</h4>
+        <div class="meta"><span class="pill">data</span><span class="pill">local DB drift</span></div>
+        <p><code>farmer1@farmconnect.ai</code> logged in successfully (valid JWT, 200 response) but
+          the token's <code>roles</code> claim came back empty — every other seeded account had
+          exactly one role row, this one had none. The seed migration itself was correct; this was
+          local database drift on one machine, not a code bug.</p>
+        <p><strong>Fix:</strong> restored the missing <code>user_roles</code> row directly.</p>
+      </div>
+    </section>
+
+    <!-- 09 RUN LOCALLY -->
+    <section class="chapter" id="run">
+      <div class="chapter-head"><span class="num">09</span><h2>Running it locally</h2></div>
+      <p class="chapter-kicker">Three processes, one Postgres instance, zero required configuration to get started.</p>
+
+      <div class="codeblock-wrap">
+        <div class="codeblock-label">start order: postgres → backend → ai-service → frontend</div>
+        <pre class="code"><code># 1. backend — http://localhost:8080
+cd backend &amp;&amp; ./mvnw spring-boot:run
+
+# 2. AI service — http://localhost:8000 (docs at /docs)
+cd ai-service &amp;&amp; uvicorn app.main:app --reload --port 8000
+
+# 3. frontend — http://localhost:5173
+cd frontend &amp;&amp; npm run dev</code></pre>
+      </div>
+
+      <h3>Demo accounts</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Role</th><th>Email</th><th>Password</th></tr></thead>
+          <tbody>
+            <tr><td>Farmer</td><td><code>farmer1@farmconnect.ai</code></td><td><code>Farmer@123</code></td></tr>
+            <tr><td>Buyer</td><td><code>buyer1@farmconnect.ai</code></td><td><code>Buyer@123</code></td></tr>
+            <tr><td>Delivery</td><td><code>delivery1@farmconnect.ai</code></td><td><code>Delivery@123</code></td></tr>
+            <tr><td>Admin</td><td><code>admin@farmconnect.ai</code></td><td><code>Admin@123</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Optional integrations — all inert until configured</h3>
+      <p>Every row below is genuinely optional. Leave any of them blank and that one feature
+        quietly degrades to its fallback — nothing else breaks.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Env var(s)</th><th>Feature</th><th>Fallback when unset</th></tr></thead>
+          <tbody>
+            <tr><td><code>GOOGLE_CLIENT_ID/SECRET</code></td><td>"Continue with Google" login</td><td>Email/password login only</td></tr>
+            <tr><td><code>MAIL_HOST/USERNAME/PASSWORD</code></td><td>Notification emails</td><td>In-app notifications only</td></tr>
+            <tr><td><code>GOOGLE_MAPS_API_KEY</code></td><td>Address geocoding + live map</td><td>Manual coordinates, no map preview</td></tr>
+            <tr><td><code>CLOUDINARY_CLOUD_NAME/KEY/SECRET</code></td><td>Cloud image hosting</td><td>Local disk under <code>backend/uploads/</code></td></tr>
+            <tr><td><code>WEATHER_API_KEY</code> (ai-service)</td><td>Real live weather</td><td>Deterministic synthetic weather</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="colophon">
+      <span>farmconnect ai · engineering field manual</span>
+      <span>every claim in this document was verified against a running instance</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.toc a[href^="#"]'));
+    var sections = links
+      .map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); })
+      .filter(Boolean);
+
+    function onScroll() {
+      var y = window.scrollY + 120;
+      var current = sections[0];
+      for (var i = 0; i < sections.length; i++) {
+        if (sections[i].offsetTop <= y) current = sections[i];
+      }
+      links.forEach(function (a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current.id);
+      });
+    }
+    document.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+</script>

@@ -1,0 +1,12 @@
+{
+  "_comment": "Base market price per unit (INR) by category, used as the starting point for price prediction.",
+  "Vegetables": 28,
+  "Fruits": 55,
+  "Leafy Greens": 22,
+  "Grains & Cereals": 32,
+  "Pulses & Legumes": 70,
+  "Dairy": 48,
+  "Spices & Herbs": 85,
+  "Exotic Vegetables": 90,
+  "default": 30
+}

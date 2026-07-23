@@ -1,0 +1,4 @@
+INSERT INTO favorites (id, buyer_id, product_id, created_at) VALUES
+    (gen_random_uuid(), '11111111-1111-1111-1111-111111111203', '11111111-1111-1111-1111-111111111301', now() - INTERVAL '5 days'),
+    (gen_random_uuid(), '11111111-1111-1111-1111-111111111203', '11111111-1111-1111-1111-111111111306', now() - INTERVAL '3 days'),
+    (gen_random_uuid(), '11111111-1111-1111-1111-111111111204', '11111111-1111-1111-1111-111111111303', now() - INTERVAL '2 days');

@@ -1,0 +1,53 @@
+{
+  "_comment": "Rule table keyed by 'soilType|season' (lowercase). Each entry is a ranked list of crop suggestions.",
+  "loamy|summer": [
+    {"cropName": "Tomato", "suitabilityScore": 92, "expectedYieldPerAcre": 18000, "expectedMarketPricePerUnit": 28, "reason": "Loamy soil with good drainage suits tomato root systems well in warm weather."},
+    {"cropName": "Okra", "suitabilityScore": 87, "expectedYieldPerAcre": 9000, "expectedMarketPricePerUnit": 34, "reason": "Okra tolerates summer heat and thrives in well-drained loamy soil."},
+    {"cropName": "Watermelon", "suitabilityScore": 81, "expectedYieldPerAcre": 22000, "expectedMarketPricePerUnit": 15, "reason": "Warm season crop that performs well in loamy, moisture-retentive soil."}
+  ],
+  "loamy|winter": [
+    {"cropName": "Cauliflower", "suitabilityScore": 90, "expectedYieldPerAcre": 14000, "expectedMarketPricePerUnit": 22, "reason": "Cool season crop that thrives in fertile loamy soil."},
+    {"cropName": "Carrot", "suitabilityScore": 88, "expectedYieldPerAcre": 12000, "expectedMarketPricePerUnit": 30, "reason": "Loose loamy soil allows straight, well-formed carrot roots."},
+    {"cropName": "Green Peas", "suitabilityScore": 84, "expectedYieldPerAcre": 8000, "expectedMarketPricePerUnit": 45, "reason": "Winter legume that fixes nitrogen and grows well in loam."}
+  ],
+  "loamy|monsoon": [
+    {"cropName": "Brinjal", "suitabilityScore": 89, "expectedYieldPerAcre": 16000, "expectedMarketPricePerUnit": 28, "reason": "Handles monsoon humidity well with good loamy drainage."},
+    {"cropName": "Rice (Paddy)", "suitabilityScore": 85, "expectedYieldPerAcre": 25000, "expectedMarketPricePerUnit": 21, "reason": "Monsoon rainfall provides natural irrigation for paddy in loam-clay mix."},
+    {"cropName": "Ridge Gourd", "suitabilityScore": 80, "expectedYieldPerAcre": 11000, "expectedMarketPricePerUnit": 24, "reason": "Vigorous monsoon grower suited to loamy soil with good organic matter."}
+  ],
+  "clay|summer": [
+    {"cropName": "Rice (Paddy)", "suitabilityScore": 88, "expectedYieldPerAcre": 24000, "expectedMarketPricePerUnit": 21, "reason": "Clay retains water well, ideal for paddy cultivation."},
+    {"cropName": "Sugarcane", "suitabilityScore": 83, "expectedYieldPerAcre": 40000, "expectedMarketPricePerUnit": 3.5, "reason": "Deep clay soil supports sugarcane's heavy water and nutrient needs."}
+  ],
+  "clay|winter": [
+    {"cropName": "Wheat", "suitabilityScore": 90, "expectedYieldPerAcre": 8000, "expectedMarketPricePerUnit": 24, "reason": "Clay-loam retains moisture well for winter wheat growth."},
+    {"cropName": "Chickpea", "suitabilityScore": 82, "expectedYieldPerAcre": 3500, "expectedMarketPricePerUnit": 60, "reason": "Winter legume tolerant of moderately heavy clay soils."}
+  ],
+  "clay|monsoon": [
+    {"cropName": "Rice (Paddy)", "suitabilityScore": 93, "expectedYieldPerAcre": 26000, "expectedMarketPricePerUnit": 21, "reason": "Waterlogged clay during monsoon is ideal for paddy."}
+  ],
+  "sandy|summer": [
+    {"cropName": "Watermelon", "suitabilityScore": 90, "expectedYieldPerAcre": 24000, "expectedMarketPricePerUnit": 15, "reason": "Sandy soil drains fast, well suited to melons in summer."},
+    {"cropName": "Groundnut", "suitabilityScore": 85, "expectedYieldPerAcre": 6000, "expectedMarketPricePerUnit": 55, "reason": "Sandy loam allows easy pod development for groundnut."}
+  ],
+  "sandy|winter": [
+    {"cropName": "Carrot", "suitabilityScore": 86, "expectedYieldPerAcre": 11000, "expectedMarketPricePerUnit": 30, "reason": "Loose sandy soil supports straight root growth."},
+    {"cropName": "Radish", "suitabilityScore": 84, "expectedYieldPerAcre": 9500, "expectedMarketPricePerUnit": 18, "reason": "Fast-draining sandy soil suits quick-growing radish."}
+  ],
+  "sandy|monsoon": [
+    {"cropName": "Green Chilli", "suitabilityScore": 79, "expectedYieldPerAcre": 5500, "expectedMarketPricePerUnit": 45, "reason": "Sandy soil with monsoon rain avoids waterlogging for chilli roots."}
+  ],
+  "black|summer": [
+    {"cropName": "Cotton", "suitabilityScore": 91, "expectedYieldPerAcre": 1800, "expectedMarketPricePerUnit": 65, "reason": "Black cotton soil retains moisture ideal for cotton in summer heat."}
+  ],
+  "black|winter": [
+    {"cropName": "Wheat", "suitabilityScore": 87, "expectedYieldPerAcre": 8200, "expectedMarketPricePerUnit": 24, "reason": "Black soil's water retention benefits winter wheat."}
+  ],
+  "black|monsoon": [
+    {"cropName": "Soybean", "suitabilityScore": 89, "expectedYieldPerAcre": 3000, "expectedMarketPricePerUnit": 42, "reason": "Black soil with monsoon rainfall is classic soybean growing terrain."}
+  ],
+  "default": [
+    {"cropName": "Tomato", "suitabilityScore": 75, "expectedYieldPerAcre": 15000, "expectedMarketPricePerUnit": 28, "reason": "Adaptable crop that performs reasonably across most soil and season combinations."},
+    {"cropName": "Spinach", "suitabilityScore": 70, "expectedYieldPerAcre": 6000, "expectedMarketPricePerUnit": 18, "reason": "Low-maintenance leafy crop suitable as a fallback recommendation."}
+  ]
+}

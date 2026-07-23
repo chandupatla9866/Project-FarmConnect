@@ -1,0 +1,12 @@
+{
+  "_comment": "Baseline average weekly quantity sold (kg) per category, used when the caller doesn't supply historicalSalesLast30Days.",
+  "Vegetables": 420,
+  "Fruits": 300,
+  "Leafy Greens": 150,
+  "Grains & Cereals": 260,
+  "Pulses & Legumes": 180,
+  "Dairy": 220,
+  "Spices & Herbs": 90,
+  "Exotic Vegetables": 60,
+  "default": 200
+}

@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: farmconnect-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: farmconnect
+      POSTGRES_USER: farmconnect
+      POSTGRES_PASSWORD: "1234"
+    ports:
+      - "5432:5432"
+    volumes:
+      - farmconnect_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U farmconnect -d farmconnect"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: farmconnect-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@farmconnect.ai
+      PGADMIN_DEFAULT_PASSWORD: "1234"
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+volumes:
+  farmconnect_pgdata:
